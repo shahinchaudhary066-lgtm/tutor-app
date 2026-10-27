@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    
+    <!-- App install tags for mobile layout -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#2c3e50">
+    
+    <title>Class 10 Offline Tutor App</title>
+    <style>
+        * { box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background-color: #f4f6f7; margin: 0; padding: 0; height: 100vh; display: flex; justify-content: center; }
+        .chat-card { width: 100%; max-width: 100%; background: white; display: flex; flex-direction: column; height: 100vh; }
+        .chat-header { background: #2c3e50; color: white; padding: 25px 15px 15px 15px; text-align: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .chat-header h2 { margin: 0; font-size: 18px; }
+        .chat-header p { margin: 5px 0 0 0; font-size: 12px; opacity: 0.8; }
+        .chat-box { flex: 1; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; background: #fafbfc; }
+        .msg { max-width: 85%; padding: 12px 14px; border-radius: 12px; font-size: 15px; line-height: 1.4; word-wrap: break-word; }
+        .tutor-msg { background: #e9ecef; color: #212529; align-self: flex-start; border-top-left-radius: 2px; }
+        .student-msg { background: #007aff; color: white; align-self: flex-end; border-top-right-radius: 2px; }
+        .input-area { display: flex; border-top: 1px solid #e9ecef; padding: 10px; background: white; padding-bottom: calc(10px + env(safe-area-inset-bottom)); }
+        .input-area input { flex: 1; padding: 12px; border: 1px solid #ced4da; border-radius: 20px; font-size: 15px; outline: none; -webkit-appearance: none; }
+        .input-area button { background: #34c759; color: white; border: none; padding: 0 18px; margin-left: 8px; border-radius: 20px; font-weight: bold; font-size: 15px; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+<div class="chat-card">
+    <div class="chat-header">
+        <h2>📚 Class 10 Offline Tutor</h2>
+        <p>Type a formula or chapter name below to start</p>
+    </div>
+    <div class="chat-box" id="chatBox">
+        <div class="msg tutor-msg">Hello! I am your Class 10 study assistant. Ask me anything about Math formulas, Science definitions, or SST facts! 🌟</div>
+    </div>
+    <div class="input-area">
+        <input type="text" id="studentInput" placeholder="Ask your offline tutor..." onkeypress="handleKeyPress(event)">
+        <button onclick="sendStudentMessage()">Send</button>
+    </div>
+</div>
+
+<script>
+    // This acts as the offline knowledge database for students
+    const tutorKnowledgeBase = [
+        {
+            keywords: ["math", "formula", "algebra", "trigonometry", "midpoint"],
+            reply: "<b>Class 10 Math Core Guide:</b><br>• <b>Quadratic Formula:</b> x = [-b ± √(b² - 4ac)] / 2a<br>• <b>Trigonometry Ratio:</b> sin²θ + cos²θ = 1<br>• <b>Midpoint Formula:</b> ((x1 + x2)/2 , (y1 + y2)/2)<br>• <b>AP Nth Term:</b> an = a + (n-1)d"
+        },
+        {
+            keywords: ["science", "physics", "lens", "mirror", "electricity"],
+            reply: "<b>Class 10 Science Core Guide:</b><br>• <b>Lens Formula:</b> 1/v - 1/u = 1/f<br>• <b>Mirror Formula:</b> 1/v + 1/u = 1/f<br>• <b>Ohm's Law:</b> V = IR<br>• <b>Power of Lens:</b> P = 1/f (in meters)"
+        },
+        {
+            keywords: ["sst", "history", "geography", "civics", "dandi"],
+            reply: "<b>Class 10 SST Reference Point:</b><br>• <b>Nationalism in India:</b> Mahatma Gandhi led the historic Dandi Salt March starting on 12th March 1930 and broke the salt law on 6th April 1930."
+        },
+        {
+            keywords: ["hi", "hello", "hlo", "hey"],
+            reply: "Hey there! Ready to practice some textbook topics? Let me know whether you want to work on Math, Science, or SST!"
+        }
+    ];
+
+    function sendStudentMessage() {
+        const inputField = document.getElementById("studentInput");
+        const queryText = inputField.value.trim();
+        if (queryText === "") return;
+
+        appendMessage(queryText, "student-msg");
+        inputField.value = "";
+
+        setTimeout(() => {
+            const lowerQuery = queryText.toLowerCase();
+            let matchedReply = "I am tracking your request! I don't have that specific question in my offline database yet. Try typing keywords like 'math', 'science', 'lens', or 'sst'.";
+
+            for (let item of tutorKnowledgeBase) {
+                let matchFound = item.keywords.some(keyword => lowerQuery.includes(keyword));
+                if (matchFound) {
+                    matchedReply = item.reply;
+                    break;
+                }
+            }
+            appendMessage(matchedReply, "tutor-msg");
+        }, 400);
+    }
+
+    function appendMessage(text, className) {
+        const chatBox = document.getElementById("chatBox");
+        const msgDiv = document.createElement("div");
+        msgDiv.className = `msg ${className}`;
+        msgDiv.innerHTML = text;
+        chatBox.appendChild(msgDiv);
+        chatBox.scrollTop = chatBox.scrollHeight;
+    }
+
+    function handleKeyPress(event) {
+        if (event.key === "Enter") {
+            sendStudentMessage();
+        }
+    }
+</script>
+
+</body>
+</html>
